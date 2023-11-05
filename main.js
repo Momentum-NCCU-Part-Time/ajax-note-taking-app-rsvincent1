@@ -1,6 +1,6 @@
 const app = {
     data: {
-        url: "http://localhost:3000/notes",
+        url: "http://localhost:3000/notes/",
         notes: []
     },
 
@@ -12,7 +12,9 @@ const app = {
 
             .then(r => r.json())
             .then(response => {
+                this.data.notes = []
                 for (let note of response) {
+
                     this.data.notes.push(note)
 
                 }
@@ -44,20 +46,16 @@ const app = {
 
     },
 
-    deleteNote: function () {
-        fetch(this.data.url, {
+    deleteNote: function (id) {
+        fetch(this.data.url + id, {
             method: 'DELETE',
             headers: { "Content-Type": "application/json" }
         })
 
             .then(r => r.json())
-            .then(response => {
-                for (let note of response) {
-                    this.data.notes.push(note)
+            .then(
+                this.getNotes()
 
-                }
-                // this.displayNote()
-            }
             )
 
     },
@@ -90,20 +88,21 @@ const app = {
 
     displayNote: function () {
         const box = document.getElementById('container')
+        box.innerHTML = ''
         for (let note of this.data.notes) {
             box.innerHTML += `
-            
+            <div>
             <div>${note.title}</div>
             <div>${note.body}</div>
             <button data-id=${note.id}>UPDATE</button>
             <button class="deleteButton" data-id=${note.id}>DELETE</button>
-            <div>${note.title}</div>
-            <div>${note.body}</div>
+          
            
-            
+            </div>
        `
             console.log(this.data.notes)
         }
+
         this.addEventListener();
     },
 
@@ -118,11 +117,8 @@ const app = {
     },
     main: function () {
         this.getNotes()
-        if (deleteButton.clicked == true) {
-            this.deleteNote()
-        }
 
     }
 }
-app.getNotes()
+app.main()
 

@@ -1,124 +1,117 @@
 const app = {
     data: {
         url: "http://localhost:3000/notes/",
-        notes: []
+        notes: [],
     },
 
     getNotes: function () {
         fetch(this.data.url, {
-            method: 'GET',
-            headers: { "Content-Type": "application/json" }
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
         })
-
-            .then(r => r.json())
-            .then(response => {
-                this.data.notes = []
+            .then((r) => r.json())
+            .then((response) => {
+                this.data.notes = [];
                 for (let note of response) {
-
-                    this.data.notes.push(note)
-
+                    this.data.notes.push(note);
                 }
-                this.displayNote()
-            }
-            )
-
+                this.displayNote();
+            });
     },
 
     createNote: function () {
+        const title = document.getElementById("title").value;
+        const message = document.getElementById("body").value;
+
+        const newData = {
+            title: title,
+            body: message,
+        };
         fetch(this.data.url, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" }
-        })
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newData),
+        }).then((r) => r.json());
 
-            .then(r => r.json())
-            .then(response => {
-                for (let note of response) {
-                    this.data.notes.push(note)
-
-                }
-                // this.displayNote()
-            }
-            )
-
+        this.getNotes();
     },
 
     createDisplay: function () {
-
+        const display = document.createElement("div");
     },
 
     deleteNote: function (id) {
         fetch(this.data.url + id, {
-            method: 'DELETE',
-            headers: { "Content-Type": "application/json" }
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
         })
-
-            .then(r => r.json())
-            .then(
-                this.getNotes()
-
-            )
-
+            .then((r) => r.json())
+            .then(this.getNotes());
     },
 
-    confirmDelete: function () {
-
-    },
+    confirmDelete: function () { },
 
     editNote: function (id) {
-        fetch(this.data.url, {
-            method: 'PATCH',
-            headers: { "Content-Type": "application/json" }
-        })
+        const title = document.getElementById("title").value;
+        const message = document.getElementById("body").value;
 
-            .then(r => r.json())
-            .then(response => {
-                for (let note of response) {
-                    this.data.notes.push(note)
-
-                }
-                // this.displayNote()
-            }
-            )
-
+        const updatedData = {
+            title: title,
+            body: message,
+        };
+        fetch(this.data.url + id, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedData),
+        }).then(this.getNotes());
+        console.log(updatedData);
     },
-
-    displayEdit: function () {
-
-    },
+    displayEdit: function () { },
 
     displayNote: function () {
-        const box = document.getElementById('container')
-        box.innerHTML = ''
+        const box = document.getElementById("container");
+        box.innerHTML = "";
         for (let note of this.data.notes) {
             box.innerHTML += `
             <div>
             <div>${note.title}</div>
             <div>${note.body}</div>
-            <button data-id=${note.id}>UPDATE</button>
+            <button class="updateButton" data-id=${note.id}>UPDATE</button>
             <button class="deleteButton" data-id=${note.id}>DELETE</button>
-          
-           
             </div>
-       `
-            console.log(this.data.notes)
+       `;
+            console.log(this.data.notes);
         }
 
         this.addEventListener();
     },
 
     addEventListener: function () {
-        let deleteButtons = document.querySelectorAll(".deleteButton")
+        let deleteButtons = document.querySelectorAll(".deleteButton");
         for (let button of deleteButtons) {
-            button.addEventListener('click', (event) => {
+            button.addEventListener("click", (event) => {
                 event.preventDefault();
-                this.deleteNote(button.dataset.id)
-            })
+                this.deleteNote(button.dataset.id);
+            });
+            let updateButtons = document.querySelectorAll(".updateButton");
+            for (let update of updateButtons) {
+                update.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    this.editNote(update.dataset.id);
+                });
+            }
+            let save = document.getElementById("saveButton");
+
+            {
+                save.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    this.createNote(save.dataset.id);
+                });
+            }
         }
     },
     main: function () {
-        this.getNotes()
-
-    }
-}
-app.main()
-
+        this.getNotes();
+    },
+};
+app.main();

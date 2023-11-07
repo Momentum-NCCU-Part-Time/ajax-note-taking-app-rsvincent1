@@ -93,22 +93,23 @@ const app = {
                 event.preventDefault();
                 this.deleteNote(button.dataset.id);
             });
-            let updateButtons = document.querySelectorAll(".updateButton");
-            for (let update of updateButtons) {
-                update.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    this.editNote(update.dataset.id);
-                });
-            }
-            let save = document.getElementById("saveButton");
-
-            {
-                save.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    this.createNote(save.dataset.id);
-                });
-            }
         }
+        let updateButtons = document.querySelectorAll(".updateButton");
+        for (let update of updateButtons) {
+            update.addEventListener("click", (event) => {
+                event.preventDefault();
+                this.editNote(update.dataset.id);
+            });
+        }
+        let save = document.getElementById("saveButton");
+
+        {
+            save.addEventListener("click", (event) => {
+                event.preventDefault();
+                this.createNote();
+            });
+        }
+
     },
     main: function () {
         this.getNotes();
